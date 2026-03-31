@@ -1663,12 +1663,24 @@ window.downloadAllPDFs = async function() {
   if (actionsBar) actionsBar.style.display = 'flex';
 };
 
-// Background Cloud Sync — polls Firestore every 15 seconds
+// Track user activity to avoid re-rendering during active operations
+let lastUserActivity = Date.now();
+const IDLE_THRESHOLD = 8000; // only sync-render if idle for 8+ seconds
+
+document.addEventListener('mousedown', () => { lastUserActivity = Date.now(); });
+document.addEventListener('keydown',   () => { lastUserActivity = Date.now(); });
+document.addEventListener('input',     () => { lastUserActivity = Date.now(); });
+document.addEventListener('focusin',   () => { lastUserActivity = Date.now(); });
+
 function startBackgroundSync() {
   if (window.electronAPI) return;
 
   setInterval(async () => {
     if (!currentUser) return;
+
+    // Don't re-render if user is actively doing something
+    const isIdle = (Date.now() - lastUserActivity) > IDLE_THRESHOLD;
+
     try {
       const cloudData = await loadFromFirestore();
       if (!cloudData) return;
@@ -1681,23 +1693,26 @@ function startBackgroundSync() {
         appData.subjects = appData.subjects || [];
         appData.results  = appData.results  || [];
 
-        const activeItem = document.querySelector('.nav-item.active');
-        if (activeItem) {
-          const pageId   = activeItem.getAttribute('data-page');
-          const pageData = pages[pageId];
-          if (pageData && pageContent) {
-            const st = pageContent.scrollTop;
-            pageContent.innerHTML = pageData.render();
-            pageContent.scrollTop = st;
-            if (pageId === 'students') attachStudentEvents();
-            if (pageId === 'results')  attachResultEvents();
-            if (pageId === 'sheets')   attachSheetEvents();
-            if (pageId === 'settings' && currentUser.role === 'admin') attachSettingsEvents();
+        // Only re-render the UI if user is idle
+        if (isIdle) {
+          const activeItem = document.querySelector('.nav-item.active');
+          if (activeItem) {
+            const pageId   = activeItem.getAttribute('data-page');
+            const pageData = pages[pageId];
+            if (pageData && pageContent) {
+              const st = pageContent.scrollTop;
+              pageContent.innerHTML = pageData.render();
+              pageContent.scrollTop = st;
+              if (pageId === 'students') attachStudentEvents();
+              if (pageId === 'results')  attachResultEvents();
+              if (pageId === 'sheets')   attachSheetEvents();
+              if (pageId === 'settings' && currentUser.role === 'admin') attachSettingsEvents();
+            }
           }
         }
       }
     } catch(e) { /* fail silently */ }
-  }, 15000);
+  }, 30000); // poll every 30 seconds
 }
 
 initApp().then(() => {
