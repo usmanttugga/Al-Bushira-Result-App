@@ -1665,12 +1665,18 @@ window.downloadAllPDFs = async function() {
 
 // Track user activity to avoid re-rendering during active operations
 let lastUserActivity = Date.now();
-const IDLE_THRESHOLD = 8000; // only sync-render if idle for 8+ seconds
+let isUserFocusedOnInput = false;
 
 document.addEventListener('mousedown', () => { lastUserActivity = Date.now(); });
 document.addEventListener('keydown',   () => { lastUserActivity = Date.now(); });
 document.addEventListener('input',     () => { lastUserActivity = Date.now(); });
-document.addEventListener('focusin',   () => { lastUserActivity = Date.now(); });
+document.addEventListener('focusin',   (e) => {
+  lastUserActivity = Date.now();
+  if (e.target.matches('input, textarea, select')) isUserFocusedOnInput = true;
+});
+document.addEventListener('focusout',  (e) => {
+  if (e.target.matches('input, textarea, select')) isUserFocusedOnInput = false;
+});
 
 function startBackgroundSync() {
   if (window.electronAPI) return;
@@ -1678,8 +1684,8 @@ function startBackgroundSync() {
   setInterval(async () => {
     if (!currentUser) return;
 
-    // Don't re-render if user is actively doing something
-    const isIdle = (Date.now() - lastUserActivity) > IDLE_THRESHOLD;
+    // Never re-render if user is typing in a field or was recently active
+    const isIdle = !isUserFocusedOnInput && (Date.now() - lastUserActivity) > 15000;
 
     try {
       const cloudData = await loadFromFirestore();
@@ -1693,7 +1699,7 @@ function startBackgroundSync() {
         appData.subjects = appData.subjects || [];
         appData.results  = appData.results  || [];
 
-        // Only re-render the UI if user is idle
+        // Only re-render the UI if user is idle and not in a form field
         if (isIdle) {
           const activeItem = document.querySelector('.nav-item.active');
           if (activeItem) {
@@ -1712,7 +1718,7 @@ function startBackgroundSync() {
         }
       }
     } catch(e) { /* fail silently */ }
-  }, 30000); // poll every 30 seconds
+  }, 30000);
 }
 
 initApp().then(() => {
