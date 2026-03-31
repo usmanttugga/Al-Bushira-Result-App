@@ -24,7 +24,10 @@ function renderLoginScreen() {
           </div>
           <div class="input-group" style="text-align: left; margin-bottom: 24px;">
             <label>Password</label>
-            <input type="password" id="login-password" class="input-control" placeholder="Enter password (password)" required>
+            <div class="pw-wrap">
+              <input type="password" id="login-password" class="input-control" placeholder="Enter password" required>
+              <button type="button" class="pw-toggle" tabindex="-1"><i class="fa-solid fa-eye"></i></button>
+            </div>
           </div>
           <button type="submit" class="btn btn-primary" style="width: 100%;">Sign In</button>
         </form>
@@ -194,15 +197,24 @@ function renderAppLayout() {
         <form id="change-password-form">
           <div class="input-group">
             <label>Current Password</label>
-            <input type="password" id="cp-current" class="input-control" required>
+            <div class="pw-wrap">
+              <input type="password" id="cp-current" class="input-control" required>
+              <button type="button" class="pw-toggle" tabindex="-1"><i class="fa-solid fa-eye"></i></button>
+            </div>
           </div>
           <div class="input-group">
             <label>New Password</label>
-            <input type="password" id="cp-new" class="input-control" required minlength="6">
+            <div class="pw-wrap">
+              <input type="password" id="cp-new" class="input-control" required minlength="6">
+              <button type="button" class="pw-toggle" tabindex="-1"><i class="fa-solid fa-eye"></i></button>
+            </div>
           </div>
           <div class="input-group">
             <label>Confirm New Password</label>
-            <input type="password" id="cp-confirm" class="input-control" required minlength="6">
+            <div class="pw-wrap">
+              <input type="password" id="cp-confirm" class="input-control" required minlength="6">
+              <button type="button" class="pw-toggle" tabindex="-1"><i class="fa-solid fa-eye"></i></button>
+            </div>
           </div>
           <div style="display: flex; gap: 12px; margin-top: 24px; justify-content: flex-end;">
             <button type="button" class="btn btn-ghost" id="cancel-cp-btn">Cancel</button>
@@ -657,7 +669,10 @@ const pages = {
                 </div>
                 <div class="input-group" style="flex:1; margin-bottom:0;">
                   <label>Password</label>
-                  <input type="password" id="new-user-password" class="input-control" placeholder="SecretPassword123" required>
+                  <div class="pw-wrap">
+                    <input type="password" id="new-user-password" class="input-control" placeholder="SecretPassword123" required>
+                    <button type="button" class="pw-toggle" tabindex="-1"><i class="fa-solid fa-eye"></i></button>
+                  </div>
                 </div>
               </div>
               <div style="display:flex; gap:12px; align-items:flex-end;">
@@ -1747,6 +1762,21 @@ function startBackgroundSync() {
     } catch(e) { /* fail silently */ }
   }, 30000);
 }
+
+// Password visibility toggle — single delegated listener covers all screens
+document.addEventListener('click', (e) => {
+  const btn = e.target.closest('.pw-toggle');
+  if (!btn) return;
+  const input = btn.closest('.pw-wrap').querySelector('input');
+  const icon  = btn.querySelector('i');
+  if (input.type === 'password') {
+    input.type = 'text';
+    icon.classList.replace('fa-eye', 'fa-eye-slash');
+  } else {
+    input.type = 'password';
+    icon.classList.replace('fa-eye-slash', 'fa-eye');
+  }
+});
 
 initApp().then(() => {
   const savedSession = localStorage.getItem('alBushiraSession');
