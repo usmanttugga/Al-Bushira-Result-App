@@ -68,7 +68,23 @@ function renderLoginScreen() {
 
 function renderAppLayout() {
   document.querySelector('#app').innerHTML = `
-    <aside class="sidebar">
+    <!-- Mobile overlay -->
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+    <!-- Mobile topbar -->
+    <div class="mobile-topbar">
+      <div class="mobile-topbar-brand">
+        <div class="brand-icon">
+          <i class="fa-solid fa-graduation-cap"></i>
+        </div>
+        <span>Al-Bushira</span>
+      </div>
+      <button class="hamburger-btn" id="hamburger-btn" aria-label="Open menu">
+        <i class="fa-solid fa-bars"></i>
+      </button>
+    </div>
+
+    <aside class="sidebar" id="main-sidebar">
       <div class="brand">
         <div class="brand-icon">
           <i class="fa-solid fa-graduation-cap"></i>
@@ -206,8 +222,28 @@ function attachLayoutEvents() {
   pageContent = document.querySelector('#page-content');
   primaryActionBtn = document.querySelector('#primary-action-btn');
 
+  // Mobile sidebar toggle
+  const hamburgerBtn = document.getElementById('hamburger-btn');
+  const sidebar = document.getElementById('main-sidebar');
+  const overlay = document.getElementById('sidebar-overlay');
+
+  function openSidebar() {
+    sidebar.classList.add('open');
+    overlay.classList.add('open');
+  }
+  function closeSidebar() {
+    sidebar.classList.remove('open');
+    overlay.classList.remove('open');
+  }
+
+  if (hamburgerBtn) hamburgerBtn.addEventListener('click', openSidebar);
+  if (overlay) overlay.addEventListener('click', closeSidebar);
+
   navItems.forEach(item => {
     item.addEventListener('click', () => {
+      // Close sidebar on mobile after nav click
+      if (sidebar) closeSidebar();
+
       // Keep active state
       navItems.forEach(n => n.classList.remove('active'));
       item.classList.add('active');
