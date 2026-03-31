@@ -1426,15 +1426,6 @@ function attachSheetEvents() {
         
         @media screen and (max-width: 768px) {
           .result-sheet { padding: 30px 20px; }
-          .sheet-header h1 { font-size: 18px; text-align: center; }
-          .sheet-header p { font-size: 12px; text-align: center; }
-          .student-header { flex-direction: column; align-items: center; text-align: center; gap: 15px; }
-          .student-info { grid-template-columns: 1fr; border-left: none; border-top: 4px solid #3b82f6; width: 100%; }
-          .student-info div { margin-bottom: 10px; }
-          .sheet-table { display: block; overflow-x: auto; white-space: nowrap; }
-          .summary-box { flex-wrap: wrap; gap: 10px; padding: 15px; }
-          .summary-box div { border-right: none; width: 45%; padding: 5px; border-bottom: 1px solid #e2e8f0; }
-          .signature-area { flex-direction: column; gap: 40px; margin-top: 40px; }
         }
         
         @page {

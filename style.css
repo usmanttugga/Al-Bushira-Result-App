@@ -820,9 +820,15 @@ select.input-control {
   margin: 20px 0;
 }
 
-/* =========================================================================
-   MOBILE TOPBAR & HAMBURGER
-   ========================================================================= */
+/* Result sheet preview — always full width, scroll on mobile */
+#sheets-preview-container {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.result-sheet {
+  min-width: 700px;
+}
 .mobile-topbar {
   display: none;
 }
@@ -987,3 +993,7 @@ select.input-control {
     -webkit-overflow-scrolling: touch;
   }
 }
+
+/* =========================================================================
+   MOBILE TOPBAR & HAMBURGER
+   ========================================================================= */
