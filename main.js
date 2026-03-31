@@ -1,5 +1,6 @@
 import './style.css';
 import { loadFromFirestore, saveToFirestore } from './src/firebase.js';
+import logoUrl from './public/logo.png';
 
 let currentUser = null; // Will hold { role: 'admin' | 'user', username: string }
 
@@ -11,8 +12,7 @@ function renderLoginScreen() {
   document.querySelector('#app').innerHTML = `
     <div class="login-screen">
       <div class="login-card">
-        <img src="./logo.png" alt="School Logo" class="school-logo">
-        <h2>Welcome Back</h2>
+        <img src="${logoUrl}" alt="School Logo" class="school-logo">
         <p>Sign in to Al-Bushira Result Compilation</p>
         
         <div id="login-error" class="login-error">Invalid credentials. Please try again.</div>
@@ -1223,7 +1223,7 @@ function attachSheetEvents() {
           width: 500px;
           height: 500px;
           transform: translate(-50%, -50%);
-          background-image: url('./logo.png');
+          background-image: url('${logoUrl}');
           background-repeat: no-repeat;
           background-position: center;
           background-size: contain;
@@ -1523,7 +1523,7 @@ function attachSheetEvents() {
         <div class="result-sheet">
           <div class="sheet-content-wrapper">
             <div class="sheet-header">
-              <img src="./logo.png" alt="School Logo" class="school-logo">
+              <img src="${logoUrl}" alt="School Logo" class="school-logo">
               <h1>Al-Bushira Nursery and Primary School, Takum</h1>
               <p>Off Anguwan Abuja Takum, Taraba State</p>
               <div class="sheet-title">Termly Continuous Assessment Dossier</div>
